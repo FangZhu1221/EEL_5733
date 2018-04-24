@@ -1,0 +1,1 @@
+cmd_/home/zf/Desktop/Fang_Zhu_assignment6/test3/assignment6_mod1.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/zf/Desktop/Fang_Zhu_assignment6/test3/assignment6_mod1.ko /home/zf/Desktop/Fang_Zhu_assignment6/test3/assignment6_mod1.o /home/zf/Desktop/Fang_Zhu_assignment6/test3/assignment6_mod1.mod.o ;  true

@@ -1,0 +1,115 @@
+
+#include <linux/ioctl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <time.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <semaphore.h>
+
+#define DEVICE "/dev/a5"
+#define ramdisk_size (size_t) (16 * PAGE_SIZE)
+
+#define CDRV_IOC_MAGIC 'Z'
+#define E2_IOCMODE1 _IOWR(CDRV_IOC_MAGIC, 1, int)
+#define E2_IOCMODE2 _IOWR(CDRV_IOC_MAGIC, 2, int)
+
+#define MODE1 1 // define mode here. There can be 2 modes
+#define MODE2 2
+
+//static int MODE;
+int fd1,fd2;
+
+void* OP_thread1(void* param)
+{
+	fd1 = open(DEVICE, O_RDWR);//open
+	if(fd1 == -1) 
+	{
+		printf("File %s either does not exist or has been locked by another process\n", DEVICE);
+		exit(-1);
+	}
+	pthread_exit(NULL);
+}
+
+void* OP_thread2(void* param)
+{
+	fd1 = open(DEVICE, O_RDWR);//open
+	if(fd2 == -1) 
+	{
+		printf("File %s either does not exist or has been locked by another process\n", DEVICE);
+		exit(-1);
+	}
+	pthread_exit(NULL);
+}
+
+void* IOC_thread1(void* param)
+{
+	unsigned int cmd = (unsigned int) param;
+
+	if(cmd == E2_IOCMODE1)
+		printf("1\n");
+	else if(cmd == E2_IOCMODE2)
+		printf("2\n");
+	else
+		printf("error\n");
+
+	int rc1 = ioctl(fd1, cmd, 0);
+	int rc2 = ioctl(fd2, cmd, 0);
+	pthread_exit(NULL);
+}
+
+void* IOC_thread2(void* param)
+{
+	unsigned int cmd = (unsigned int) param;
+
+	if(cmd == E2_IOCMODE1)
+		printf("1\n");
+	else if(cmd == E2_IOCMODE2)
+		printf("2\n");
+	else
+		printf("error\n");
+
+	int rc = ioctl(fd1, cmd, 0);
+	pthread_exit(NULL);
+}
+
+void* IOC_thread3(void* param)
+{
+	unsigned int cmd = (unsigned int) param;
+
+	if(cmd == E2_IOCMODE1)
+		printf("1\n");
+	else if(cmd == E2_IOCMODE2)
+		printf("2\n");
+	else
+		printf("error\n");
+
+	int rc = ioctl(fd2, cmd, 0);
+	pthread_exit(NULL);
+}
+
+int main(int argc, char *argv[])
+{
+
+    printf("\n Start! \n");
+    pthread_t IOC1,IOC2,IOC3,OP1,OP2;
+
+  	pthread_create(&IOC1, NULL, IOC_thread1, (void *)(E2_IOCMODE1));
+  	pthread_create(&OP1, NULL, OP_thread1, NULL);
+  	pthread_create(&OP2, NULL, OP_thread2, NULL);
+  	pthread_create(&IOC2, NULL, IOC_thread2, (void *)(E2_IOCMODE2));
+	pthread_create(&IOC3, NULL, IOC_thread3, (void *)(E2_IOCMODE2));
+
+	pthread_join(IOC1, NULL);
+	pthread_join(OP1, NULL);
+	pthread_join(OP2, NULL);
+	pthread_join(IOC2, NULL);
+	pthread_join(IOC3, NULL);
+	close(fd1);
+	close(fd2);
+	pthread_exit(NULL);
+	return 0;
+}
+

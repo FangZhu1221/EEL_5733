@@ -1,0 +1,1 @@
+cmd_/home/zf/Desktop/Fang_Zhu_assignment6/Deadlock/test1/assignment6.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/zf/Desktop/Fang_Zhu_assignment6/Deadlock/test1/assignment6.ko /home/zf/Desktop/Fang_Zhu_assignment6/Deadlock/test1/assignment6.o /home/zf/Desktop/Fang_Zhu_assignment6/Deadlock/test1/assignment6.mod.o ;  true

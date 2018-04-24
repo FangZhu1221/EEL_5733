@@ -1,0 +1,1 @@
+cmd_/home/zf/Desktop/Fang_Zhu_assignment6/Deadlock/test4/built-in.o :=  rm -f /home/zf/Desktop/Fang_Zhu_assignment6/Deadlock/test4/built-in.o; ar rcSTPD /home/zf/Desktop/Fang_Zhu_assignment6/Deadlock/test4/built-in.o
